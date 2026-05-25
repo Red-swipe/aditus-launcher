@@ -1,0 +1,17 @@
+{
+  "trigger": {
+    "type": "clap",
+    "hotkey": "ctrl+shift+j"
+  },
+  "clap": {
+    "threshold": 15.0,
+    "interval": 0.4,
+    "cooldown": 5.0,
+    "debounce": 0.08
+  },
+  "permissions": {
+    "mic_enabled": true,
+    "startup_enabled": true
+  },
+  "apps": []
+}

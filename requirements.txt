@@ -1,0 +1,7 @@
+customtkinter
+pyaudio
+numpy
+psutil
+pywin32
+pyautogui
+pyinstaller
