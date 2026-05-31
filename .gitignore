@@ -29,3 +29,5 @@ scratch/
 # Aditus-specific
 app/Aditus.exe
 dev/
+icon.ico
+debug_trace.py
