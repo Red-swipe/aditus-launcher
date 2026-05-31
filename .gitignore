@@ -4,7 +4,7 @@ __pycache__/
 
 # Build artifacts
 build/
-dist/*.exe
+dist/
 
 # PyInstaller specs backups
 *.spec.bak
@@ -18,6 +18,7 @@ aditus_config.json
 
 # Third-party skills (external dependencies)
 .agent/
+skills/
 
 # Debug scripts
 scratch/
