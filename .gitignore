@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Build artifacts
+build/
+dist/*.exe
+
+# PyInstaller specs backups
+*.spec.bak
+
+# Debug logs
+aditus_debug_*.txt
+
+# User configuration (should not be versioned)
+install_state.json
+aditus_config.json
+
+# Third-party skills (external dependencies)
+.agent/
+
+# Debug scripts
+scratch/
+
+# Log files
+*.log
+
+# Aditus-specific
+app/Aditus.exe
+dev/

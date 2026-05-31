@@ -1,29 +1,32 @@
-# event_queue.py
-"""Thread‑safe event queue used by the runtime engine.
-
-Only simple put/get operations are needed. The queue blocks with a timeout
-so that the runtime loop can check for a stop signal regularly.
-"""
-
 import queue
-from typing import Any, Dict
+import threading
+
 
 class EventQueue:
-    """Wrapper around :class:`queue.Queue` providing typed put/get.
-    """
-
-    def __init__(self, maxsize: int = 0):
+    def __init__(self, maxsize: int = 100):
         self._queue = queue.Queue(maxsize=maxsize)
 
-    def put(self, event: Dict[str, Any]) -> None:
-        """Enqueue an event.
-        """
-        self._queue.put(event)
+    def put(self, event: dict) -> None:
+        try:
+            self._queue.put_nowait(event)
+        except queue.Full:
+            pass
 
-    def get(self, timeout: float | None = None) -> Dict[str, Any]:
-        """Dequeue an event, optionally waiting up to *timeout* seconds.
-        """
-        return self._queue.get(timeout=timeout)
+    def put_nowait(self, event: dict) -> None:
+        self._queue.put_nowait(event)
 
-    def empty(self) -> bool:
-        return self._queue.empty()
+    def get_nowait(self):
+        try:
+            return self._queue.get_nowait()
+        except queue.Empty:
+            return None
+
+    def qsize(self) -> int:
+        return self._queue.qsize()
+
+
+_global_queue = EventQueue()
+
+
+def get_event_queue() -> EventQueue:
+    return _global_queue

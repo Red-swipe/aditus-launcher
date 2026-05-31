@@ -1,17 +1,15 @@
 {
   "trigger": {
     "type": "clap",
-    "hotkey": "ctrl+shift+j"
+    "hotkey": "ctrl+shift+j",
+    "sensitivity": 5,
+    "options": [
+      "clap",
+      "hotkey",
+      "manual"
+    ]
   },
-  "clap": {
-    "threshold": 15.0,
-    "interval": 0.4,
-    "cooldown": 5.0,
-    "debounce": 0.08
-  },
-  "permissions": {
-    "mic_enabled": true,
-    "startup_enabled": true
-  },
-  "apps": []
+  "apps": [],
+  "startup": false,
+  "minimize_to_tray": true
 }

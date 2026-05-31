@@ -1,38 +1,49 @@
-# trigger_integration.py
-"""Integration layer that connects trigger implementations to the runtime engine.
-
-Triggers should **never** launch applications directly. Instead they emit events
-through this module, which forwards them to a shared, thread‑safe
-:class:`EventQueue`. The runtime engine consumes those events and performs the
-required actions (e.g., launching an app).
-"""
-
-from .event_queue import EventQueue
 import logging
+import threading
 
-logger = logging.getLogger(__name__)
+from app.runtime.event_queue import get_event_queue as _get_event_queue
 
-# A singleton EventQueue shared across the process. All triggers import this
-# module and use ``emit_event`` to push events.
-_global_queue = EventQueue()
-
-
-def get_event_queue() -> EventQueue:
-    """Return the shared EventQueue instance.
-
-    This can be useful for advanced scenarios where a component needs direct
-    access to the queue (e.g., testing).
-    """
-    return _global_queue
+logger = logging.getLogger("aditus.trigger")
 
 
-def emit_event(event: dict) -> None:
-    """Validate and enqueue an event produced by a trigger.
+def get_event_queue():
+    return _get_event_queue()
 
-    The ``event`` dictionary must contain at least a ``type`` key. Additional
-    keys are interpreted by the runtime engine.
-    """
-    if not isinstance(event, dict) or "type" not in event:
-        raise ValueError("Trigger event must be a dict containing a 'type' key")
-    logger.debug("Emitting trigger event: %s", event)
-    _global_queue.put(event)
+
+def emit_event(event: dict):
+    get_event_queue().put(event)
+
+
+class HotkeyTrigger:
+    def __init__(self, hotkey: str, callback):
+        self.hotkey = hotkey
+        self.callback = callback
+        self._thread = None
+
+    def start(self):
+        self._thread = threading.Thread(target=self._listen, daemon=True)
+        self._thread.start()
+
+    def stop(self):
+        pass
+
+    def _listen(self):
+        try:
+            import keyboard
+        except ImportError:
+            logger.warning("keyboard module not available, hotkey disabled")
+            return
+
+        def _on_hotkey():
+            logger.info("aditus.trigger: %s fired", self.hotkey)
+            self.callback()
+
+        try:
+            keyboard.add_hotkey(self.hotkey, _on_hotkey, suppress=False)
+            logger.info("Hotkey '%s' registered", self.hotkey)
+            keyboard.wait()
+        except Exception as e:
+            logger.warning("Hotkey registration failed: %s", e)
+
+
+from app.runtime.clap_detector import ClapDetector  # noqa: E402

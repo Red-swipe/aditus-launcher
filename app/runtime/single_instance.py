@@ -147,11 +147,11 @@ class LockFile:
             PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
             PROCESS_VM_READ = 0x0010
             PROCESS_TERMINATE = 0x0001
-            handle = ctypes.windll.kernel32.OpenProcess(
+            handle = _kernel32.OpenProcess(
                 PROCESS_QUERY_LIMITED_INFORMATION, 0, pid
             )
             if handle:
-                ctypes.windll.kernel32.CloseHandle(handle)
+                _kernel32.CloseHandle(handle)
                 return True
             return False
         else:
